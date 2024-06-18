@@ -55,9 +55,3 @@ def deleteFavourite(request):
 @login_required
 def exit(request):
     pass
-
-
-#puto el que lo lea
-
-#Un cambio, padre
-
