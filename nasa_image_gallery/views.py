@@ -56,4 +56,8 @@ def deleteFavourite(request):
 def exit(request):
     pass
 
+
+#puto el que lo lea
+
 #Un cambio, padre
+
