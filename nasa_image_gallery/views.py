@@ -6,6 +6,7 @@ from .layers.services import services_nasa_image_gallery
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages
+from googletrans import Translator
 
 # función que invoca al template del índice de la aplicación.
 def index_page(request):
@@ -28,8 +29,19 @@ def home(request):
 
 # función utilizada en el buscador.
 def search(request):
-    images, favourite_list = getAllImagesAndFavouriteList(request)
-    search_msg = request.POST.get('query', '')
+    if request.method == 'POST':    
+        search_msg = request.POST.get('query', '')
+        if search_msg:
+            # Traduce la palabra del español al ingles
+            translator = Translator()
+            translatedSearch_mgs = translator.translate(search_msg, src='es', dest='en').text
+            # Intenta obtener las imágenes que coincidan con el texto de búsqueda
+            images = getAllImages(translatedSearch_mgs)
+            return render(request, 'home.html',{'images': images})
+        else:
+            # Intenta obtener todas las imágenes si no hay texto de búsqueda
+            images=getAllImages()
+            return render(request, 'home.html',{'images': images})
 
     # si el usuario no ingresó texto alguno, debe refrescar la página; caso contrario, debe filtrar aquellas imágenes que posean el texto de búsqueda.
     pass
