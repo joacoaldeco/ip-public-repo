@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 # modelo para un favorito.
 # un usuario puede tener 0...n favoritos asociados. Si un usuario es borrado, no nos interesa retener sus favoritos, por lo cual se borran en cascada.
@@ -13,3 +15,8 @@ class Favourite(models.Model):
 
     class Meta:
         unique_together = ('user', 'title', 'description', 'image_url', 'date')
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'password1','password2','email')        
