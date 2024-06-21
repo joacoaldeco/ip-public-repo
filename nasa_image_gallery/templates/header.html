@@ -11,7 +11,22 @@
 </head>
 
 <body>
+<<<<<<< HEAD
     <nav class="navbar navbar-expand-lg">
+=======
+    <div class="lds-roller">
+     <div></div>
+     <div></div>
+     <div></div>
+     <div></div>
+     <div></div>
+     <div></div>
+     <div></div> 
+     <div></div>
+    </div>
+    
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+>>>>>>> a764bd84cd099254ab4e4feec3dd5f7335664faa
         <div class="container-fluid">
             <h1 class="navbar-brand" href="#">Proyecto TP</h1>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +54,7 @@
                         </ul>
                     </div>
                     {% endif %}
+<<<<<<< HEAD
                     <div class="">
                         <ul class="navbar-nav position-absolute end-0 mx-3">
                             <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
@@ -46,6 +62,13 @@
                             <a class="nav-link" href="{% url 'register' %}">Registrarse</a> 
                         </ul>
                     </div>
+=======
+                    <li class="nav-item">
+                        {% if request.user.is_authenticated %}
+                        <a class="nav-link" href="{% url 'logout' %}">Salir</a> {% else %}
+                        <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a> {% endif %}
+                    </li>
+>>>>>>> a764bd84cd099254ab4e4feec3dd5f7335664faa
                 </ul>
             </div>
         </div>
