@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages
 from googletrans import Translator
+from nasa_image_gallery.palBuscables import palIngles
 
 # función que invoca al template del índice de la aplicación.
 def index_page(request):
@@ -32,16 +33,31 @@ def search(request):
     if request.method == 'POST':    
         search_msg = request.POST.get('query', '')
         if search_msg:
+            #evita que se rompa si buscan apretando la tecla espacio
+            if(search_msg in "                 "):
+                images= getAllImages()
+                return render(request,"home.html",{"images":images})
             # Traduce la palabra del español al ingles
             translator = Translator()
             translatedSearch_mgs = translator.translate(search_msg, src='es', dest='en').text
-            # Intenta obtener las imágenes que coincidan con el texto de búsqueda
-            images = getAllImages(translatedSearch_mgs)
-            return render(request, 'home.html',{'images': images})
+            #si es una de las palabras de la lista de palbuscables.py entra
+            if(search_msg in palIngles):
+                images= getAllImages(search_msg)
+                return render(request,"home.html",{"images":images})
+            else:
+                #si esta en español la traduce y si está en la lista de palbuscables.py entra
+                #para el traslate ejecutar como admin el visual y en la terminal poner: pip install googletrans==4.0.0-rc1
+                if(translatedSearch_mgs.lower() in palIngles):
+                    images= getAllImages(translatedSearch_mgs)
+                    return render(request,"home.html",{"images":images})
+                # si no está en la lista,busca por default "space"
+                else:
+                    images= getAllImages()
+                    return render(request,"home.html",{"images":images})
+        #si no pusieron nada busca por default "space"                    
         else:
-            # Intenta obtener todas las imágenes si no hay texto de búsqueda
-            images=getAllImages()
-            return render(request, 'home.html',{'images': images})
+            images= getAllImages()
+            return render(request,"home.html",{"images":images})
 
     # si el usuario no ingresó texto alguno, debe refrescar la página; caso contrario, debe filtrar aquellas imágenes que posean el texto de búsqueda.
     pass
