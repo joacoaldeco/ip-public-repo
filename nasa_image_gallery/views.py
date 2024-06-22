@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from .layers.services import services_nasa_image_gallery
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages
+from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages,saveFavourite as saveFavourite2,getAllFavouritesByUser as getAllFavouritesByUser2,deleteFavourite as deleteFavourite2
 from googletrans import Translator
 from nasa_image_gallery.palBuscables import palIngles
 from .models import CustomUserCreationForm
@@ -14,6 +14,9 @@ from django.urls import reverse
 # función que invoca al template del índice de la aplicación.
 def index_page(request):
     return render(request, 'index.html')
+
+def login_page(request):
+    return render(request,'login.html')
 
 
 # auxiliar: retorna 2 listados -> uno de las imágenes de la API y otro de los favoritos del usuario.
@@ -84,21 +87,24 @@ def login_page(request):
 
 # las siguientes funciones se utilizan para implementar la sección de favoritos: traer los favoritos de un usuario, guardarlos, eliminarlos y desloguearse de la app.
 @login_required
-def getAllFavouritesByUser(request):
-    favourite_list = []
+def getAllFavouritesByUser(request): 
+    favourite_list = getAllFavouritesByUser2(request)
     return render(request, 'favourites.html', {'favourite_list': favourite_list})
 
 
 @login_required
 def saveFavourite(request):
-    pass
+    if request.method=='POST':
+        saveFavourite2(request)
 
+        return redirect('/home')
 
 @login_required
 def deleteFavourite(request):
-    pass
-
+    if request.method=='POST':
+        deleteFavourite2(request)
+        return redirect('/favourites')
 
 @login_required
 def exit(request):
-    pass
+    return index_page(request)
