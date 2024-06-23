@@ -1,4 +1,5 @@
 {% extends 'header.html' %} {% block content %}
+    
 <div class="login-form" style="text-align: center;">
     <form action="{% url 'login' %}" method="POST" style="display: inline-block;">
         {% csrf_token %}
@@ -13,5 +14,8 @@
             <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
         </div>
     </form>
+    {% if form.errors %}
+    <p>Su nombre de usuario y contraseña no coinciden. Inténtalo de nuevo.</p>
+    {% endif %}
 </div>
 {% endblock %}
