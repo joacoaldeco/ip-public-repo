@@ -19,4 +19,4 @@ class Favourite(models.Model):
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('username', 'password1','password2','email', 'first_name', 'last_name')        
+        fields = ('first_name', 'last_name','username', 'password1','password2','email')        
