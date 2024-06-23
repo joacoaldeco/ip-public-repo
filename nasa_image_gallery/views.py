@@ -19,9 +19,6 @@ from main import settings
 def index_page(request):
     return render(request, 'index.html')
 
-def login_page(request):
-    return render(request,'login.html')
-
 
 # auxiliar: retorna 2 listados -> uno de las imágenes de la API y otro de los favoritos del usuario.
 def getAllImagesAndFavouriteList(request):
