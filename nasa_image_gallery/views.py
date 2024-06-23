@@ -5,11 +5,15 @@ from django.shortcuts import redirect, render
 from .layers.services import services_nasa_image_gallery
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages
+from nasa_image_gallery.layers.services.services_nasa_image_gallery import getAllImages,saveFavourite as saveFavourite2,getAllFavouritesByUser as getAllFavouritesByUser2,deleteFavourite as deleteFavourite2
 from googletrans import Translator
 from nasa_image_gallery.palBuscables import palIngles
 from .models import CustomUserCreationForm
 from django.urls import reverse
+from django.contrib import messages
+from django.core.mail import send_mail
+from main import settings
+
 
 # función que invoca al template del índice de la aplicación.
 def index_page(request):
@@ -19,12 +23,12 @@ def index_page(request):
 # auxiliar: retorna 2 listados -> uno de las imágenes de la API y otro de los favoritos del usuario.
 def getAllImagesAndFavouriteList(request):
     images = getAllImages()
-    favourite_list = []
+    favourite_list = getAllFavouritesByUser(request)
     return images, favourite_list
 
 
 # función principal de la galería.
-@login_required
+
 def home(request):
     # llama a la función auxiliar getAllImagesAndFavouriteList() y obtiene 2 listados: uno de las imágenes de la API y otro de favoritos por usuario*.
     # (*) este último, solo si se desarrolló el opcional de favoritos; caso contrario, será un listado vacío [].
@@ -68,14 +72,25 @@ def search(request):
 
 # Crear / registrar cuenta
 def register_view(request):
-    form= CustomUserCreationForm()
-    if request.method == 'POST':
+    form = CustomUserCreationForm()
+    if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            subject = 'verificación'
+            message = f'¡Hola {form.cleaned_data.get("first_name")}!\n\n' \
+                      f'Gracias por registrarte en nuestro sitio. A continuación, encontrarás tus credenciales de acceso:\n\n' \
+                      f'Nombre de usuario: {form.cleaned_data.get("username")}\n' \
+                      f'Contraseña: {form.cleaned_data.get("password1")}\n\n' \
+                      f'¡Bienvenido y disfruta de nuestra plataforma!\n\n' \
+                      f'Saludos,\n' \
+                      f'El equipo de Introducción a la Programación Número 3'
+            recipient = form.cleaned_data.get('email')
+            print("Se envió el correo")
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [recipient], fail_silently=False)
             form.save()
-            print("Fuiste Registrado, PA")
+            print("REGISTRADO EXITOSAMENTE")
             return redirect(reverse('login'))
-    return render(request, 'register.html', {'form':form})
+    return render(request, 'register.html', {'form': form})
 
 
 def login_page(request):
@@ -84,21 +99,25 @@ def login_page(request):
 
 # las siguientes funciones se utilizan para implementar la sección de favoritos: traer los favoritos de un usuario, guardarlos, eliminarlos y desloguearse de la app.
 @login_required
-def getAllFavouritesByUser(request):
-    favourite_list = []
+def getAllFavouritesByUser(request): 
+    favourite_list = getAllFavouritesByUser2(request)
     return render(request, 'favourites.html', {'favourite_list': favourite_list})
 
 
 @login_required
 def saveFavourite(request):
-    pass
+    if request.method=='POST':
+        saveFavourite2(request)
 
+        return redirect('/home')
 
 @login_required
 def deleteFavourite(request):
-    pass
+    if request.method=='POST':
+        deleteFavourite2(request)
+        return redirect('/favourites')
 
 
-@login_required
 def exit(request):
-    pass
+    print("salió")
+    return index_page(request)

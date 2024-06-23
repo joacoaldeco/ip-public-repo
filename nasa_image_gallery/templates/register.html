@@ -1,5 +1,5 @@
 {% extends 'header.html' %} {% block content %}
-<div  class="container h-100" style=""  >
+<div  class="container h-100"  >
     <form action="{% url 'register' %}" method="POST">
         {% csrf_token %}
         <div  style="background-color: #eee;" class="form-control form-control-lg" >
