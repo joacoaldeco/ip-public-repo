@@ -32,7 +32,8 @@ def getAllImagesAndFavouriteList(request):
 def home(request):
     # llama a la función auxiliar getAllImagesAndFavouriteList() y obtiene 2 listados: uno de las imágenes de la API y otro de favoritos por usuario*.
     # (*) este último, solo si se desarrolló el opcional de favoritos; caso contrario, será un listado vacío [].
-    images,favourite_list=getAllImagesAndFavouriteList(request)
+    images=getAllImages()
+    favourite_list = getAllFavouritesByUser2(request)
     return render(request, 'home.html', {'images': images, 'favourite_list': favourite_list} )
 
 
@@ -89,13 +90,12 @@ def register_view(request):
             send_mail(subject, message, settings.EMAIL_HOST_USER, [recipient], fail_silently=False)
             form.save()
             print("REGISTRADO EXITOSAMENTE")
-            return redirect(reverse('login'))
+            return redirect('login')
     return render(request, 'register.html', {'form': form})
 
 
 def login_page(request):
-    return render(request,'login.html')
-
+    return render(request, 'login.html')
 
 # las siguientes funciones se utilizan para implementar la sección de favoritos: traer los favoritos de un usuario, guardarlos, eliminarlos y desloguearse de la app.
 @login_required
@@ -108,8 +108,8 @@ def getAllFavouritesByUser(request):
 def saveFavourite(request):
     if request.method=='POST':
         saveFavourite2(request)
-
         return redirect('/home')
+
 
 @login_required
 def deleteFavourite(request):
